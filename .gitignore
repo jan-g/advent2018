@@ -1,0 +1,5 @@
+.stack-work/
+advent.cabal
+*~
+/.idea/
+/out/
