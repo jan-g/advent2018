@@ -1,8 +1,10 @@
 module Day5
     ( day5
+    , day5b
     ) where
 
 import Data.Char
+import Data.Set (Set, empty, insert, toList)
 
 {-
 You've managed to sneak in to the prototype suit manufacturing lab. The Elves are making decent progress, but are still
@@ -61,3 +63,41 @@ activate (y:ys) (x:xs) =
 
 annihilates x y =
   toUpper x == toUpper y && x /= y
+
+
+{-
+Time to improve the polymer.
+
+One of the unit types is causing problems; it's preventing the polymer from collapsing as much as it should. Your goal
+is to figure out which unit type is causing the most problems, remove all instances of it (regardless of polarity),
+fully react the remaining polymer, and measure its length.
+
+For example, again using the polymer dabAcCaCBAcCcaDA from above:
+
+    Removing all A/a units produces dbcCCBcCcD. Fully reacting this polymer produces dbCBcD, which has length 6.
+    Removing all B/b units produces daAcCaCAcCcaDA. Fully reacting this polymer produces daCAcaDA, which has length 8.
+    Removing all C/c units produces dabAaBAaDA. Fully reacting this polymer produces daDA, which has length 4.
+    Removing all D/d units produces abAcCaCBAcCcaA. Fully reacting this polymer produces abCBAc, which has length 6.
+
+In this example, removing all C/c units was best, producing the answer 4.
+
+What is the length of the shortest polymer you can produce by removing all units of exactly one type and fully reacting
+the result?
+-}
+
+
+day5b :: [String] -> IO ()
+day5b ls = do
+  let polymer = ls !! 0
+      units = allUnits polymer
+      result = minimum [(len, unit) | unit <- toList units,
+                                  let newPoly = polymer `without` unit
+                                      len = length $ activate "" newPoly]
+  putStrLn ("length of result is " ++ (show result))
+
+{- accumulate all lower-cased characters into a set -}
+allUnits p = Prelude.foldl (flip $ insert . toLower) empty p
+
+{- ditch all occurrences of a particular unit from a polymer -}
+without :: String -> Char -> String
+p `without` u = filter (\c -> toLower u /= toLower c) p

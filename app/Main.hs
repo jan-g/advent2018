@@ -30,6 +30,7 @@ main = do
                  "day4" -> day4
                  "day4b" -> day4b
                  "day5" -> day5
+                 "day5b" -> day5b
       source = args !! 1
   ls <- loadLines source
   action ls
