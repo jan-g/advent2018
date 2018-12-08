@@ -2,6 +2,7 @@ module Day5
     ( day5
     ) where
 
+import Data.Char
 
 {-
 You've managed to sneak in to the prototype suit manufacturing lab. The Elves are making decent progress, but are still
@@ -38,5 +39,25 @@ large; if you copy/paste your input, make sure you get the whole thing.)
 
 
 day5 :: [String] -> IO ()
-day5 lines = do
-  return ()
+day5 ls = do
+  let result = activate "" (ls !! 0)
+  putStrLn ("length of result is " ++ (show $ length result))
+
+{- The first aoc problem that seems amenable to a functional approach.
+  Or maybe I've just stopped trying to force a pythonesque style?
+  This is basically a zipper. The two arguments represent the sequence
+  we've traversed over thus far (starting at the left), in reverse order,
+  and the sequence left to traverse.
+  The invariant here is that no consumable subsequences appear in the
+  first argument.
+-}
+
+activate xs "" = reverse xs
+activate "" (x:xs) = activate (x:"") xs
+activate (y:ys) (x:xs) =
+  if x `annihilates` y
+  then activate ys xs
+  else activate (x:y:ys) xs
+
+annihilates x y =
+  toUpper x == toUpper y && x /= y
