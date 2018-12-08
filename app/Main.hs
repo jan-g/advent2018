@@ -6,16 +6,10 @@ import Day2
 import Day3
 import Day4
 import Day5
+import Day6
+
 
 import System.Environment
-import Data.Counter (Counter, empty, update, count, union, updateWith)
-import qualified Data.Map.Strict (filter, size)
-import Data.Map.Strict ((!), toList, foldlWithKey, filterWithKey)
-import Text.ParserCombinators.ReadP
-import Data.Maybe
-import Data.Function (on)
-import Data.List
-
 
 
 main = do
@@ -31,6 +25,8 @@ main = do
                  "day4b" -> day4b
                  "day5" -> day5
                  "day5b" -> day5b
+                 "day6" -> day6
+                 "day6b" -> day6b
       source = args !! 1
   ls <- loadLines source
   action ls

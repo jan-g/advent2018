@@ -1,6 +1,5 @@
 module Lib
-    ( someFunc
-    , loadLines
+    ( loadLines
     , intParser
     ) where
 
@@ -8,9 +7,6 @@ import System.Environment
 import Text.Read
 import Text.ParserCombinators.ReadP
 import Data.Char
-
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
 
 loadLines :: String -> IO [String]
 loadLines fn = do
