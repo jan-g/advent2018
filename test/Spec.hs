@@ -3,6 +3,7 @@ import Test.QuickCheck
 import Control.Exception (evaluate)
 
 import Day7
+import qualified Day8
 import qualified Data.Set as Set
 
 main :: IO ()
@@ -49,3 +50,31 @@ main = hspec $ do
                     (9, 'F'),
                     (10, 'D'),
                     (15, 'E')]
+
+  describe "Day8" $ do
+    it "parses a tree sequence" $ do
+      Day8.parseLine "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2"
+        `shouldBe` (Just $ Day8.tree [
+                    Day8.tree [] [10, 11, 12],
+                    Day8.tree [
+                      Day8.tree [] [99]
+                              ] [2]
+                             ] [1, 1, 2])
+
+    it "recursively sums metadata" $ do
+      Day8.sumMeta (Day8.tree [
+                 Day8.tree [] [10, 11, 12],
+                 Day8.tree [
+                           Day8.tree [] [99]
+                           ] [2]
+                 ] [1, 1, 2]) `shouldBe` 138
+
+    it "evaluates node C" $ do
+      Day8.evaluate (Day8.tree [Day8.tree [] [99]] [2]) `shouldBe` 0
+
+    it "evaluates node B" $ do
+      Day8.evaluate (Day8.tree [] [10, 11, 12]) `shouldBe` 33
+
+    it "evaluates the root node" $ do
+      Day8.evaluate (Day8.tree [Day8.tree [] [10, 11, 12], Day8.tree [Day8.tree [] [99]] [2]] [1, 1, 2])
+        `shouldBe` 66
