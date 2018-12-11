@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - containers >= 0.5.9
 - counter >= 0.1.0.2
+- heap >= 1.0.4
 
 library:
   source-dirs: src
@@ -48,3 +49,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - advent
+    - hspec >= 2.5.5
+    - QuickCheck >= 2.11
