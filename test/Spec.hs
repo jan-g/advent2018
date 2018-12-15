@@ -4,6 +4,7 @@ import Control.Exception (evaluate)
 
 import Day7
 import qualified Day8
+import qualified Day9
 import qualified Data.Set as Set
 
 main :: IO ()
@@ -78,3 +79,23 @@ main = hspec $ do
     it "evaluates the root node" $ do
       Day8.evaluate (Day8.tree [Day8.tree [] [10, 11, 12], Day8.tree [Day8.tree [] [99]] [2]] [1, 1, 2])
         `shouldBe` 66
+
+  describe "Day9" $ do
+    it "rotates clockwise" $ do
+      Day9.rotate 1 [1, 2, 3, 4] `shouldBe` [2, 3, 4, 1]
+
+    it "rotates anticlockwise" $ do
+      Day9.rotate (-1) [1, 2, 3, 4] `shouldBe` [4, 1, 2, 3]
+
+    it "evaluates some basic games" $ do
+      (Day9.maxScore $ Day9.runGame 9 25) `shouldBe` 32
+    it "evaluates 1 move" $ do
+      (Day9.marbles $ Day9.runGame 9 1) `shouldBe` [1, 0]
+    it "evaluates 10 moves" $ do
+      (Day9.marbles $ Day9.runGame 9 10) `shouldBe` [10, 5, 1, 6, 3, 7, 0, 8, 4, 9, 2]
+
+    it "evaluates a longer game" $ do
+      (Day9.maxScore $ Day9.runGame 10 1618) `shouldBe` 8317
+
+    it "evaluates a much longer game" $ do
+      (Day9.maxScore $ Day9.runGame 13 7999) `shouldBe` 146373

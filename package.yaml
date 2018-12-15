@@ -24,6 +24,7 @@ dependencies:
 - containers >= 0.5.9
 - counter >= 0.1.0.2
 - heap >= 1.0.4
+- array >= 0.5.2.0
 
 library:
   source-dirs: src
