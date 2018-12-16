@@ -2,6 +2,8 @@ module Lib
     ( loadLines
     , intParser
     , natParser
+    , forAllIO
+    , dropWhileR
     ) where
 
 import System.Environment
@@ -24,3 +26,11 @@ intParser = do
     char '-'
     i <- natParser
     return $ -i) <++ natParser
+
+forAllIO :: [a] -> (a -> IO b) -> IO b
+forAllIO [a] f = f a
+forAllIO (a:as) f = do
+  f a
+  forAllIO as f
+
+dropWhileR p as = reverse $ dropWhile p $ reverse as

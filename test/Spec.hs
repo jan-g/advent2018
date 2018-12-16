@@ -5,7 +5,9 @@ import Control.Exception (evaluate)
 import Day7
 import qualified Day8
 import qualified Day9
+import qualified Day11
 import qualified Data.Set as Set
+import Data.Array ((!))
 
 main :: IO ()
 main = hspec $ do
@@ -99,3 +101,27 @@ main = hspec $ do
 
     it "evaluates a much longer game" $ do
       (Day9.maxScore $ Day9.runGame 13 7999) `shouldBe` 146373
+
+  describe "Day11" $ do
+    it "computes values correctly" $ do
+      Day11.cellValue 57 122 79 `shouldBe` -5
+      Day11.cellValue 39 217 196 `shouldBe` 0
+      Day11.cellValue 71 101 153 `shouldBe` 4
+
+    it "computes the grid correctly" $ do
+      let pls = Day11.makeArray 8
+      pls ! (3, 5) `shouldBe` 4
+
+    it "solves grid number 18" $ do
+      let pls = Day11.makeArray 18
+          ts = Day11.sumCells pls 3
+          (x, y, m) = Day11.maxFor [1..298] [1..298] ts
+      pls ! (33, 45) `shouldBe` 4
+      pls ! (34, 46) `shouldBe` 3
+      ts ! (33, 45) `shouldBe` 29
+      (x, y, m) `shouldBe` (33, 45, 29)
+
+    it "computes the right answer for n=16, grid #18" $ do
+      let pls = Day11.makeArray 18
+          (x, y, m) = Day11.calcMax pls 16
+      (x, y, m) `shouldBe` (90, 269, 113)
