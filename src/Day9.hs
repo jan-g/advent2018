@@ -1,8 +1,11 @@
+{-# LANGUAGE RecursiveDo #-}
+
 module Day9
     ( day9
     , day9b
     , Game, runGame, maxScore, marbles
     , rotate
+    , run2
     ) where
 
 import Lib
@@ -12,6 +15,11 @@ import Data.Char
 import qualified Data.Map as Map
 import qualified Data.Array as Array
 import Data.Array ((!),(//))
+import Control.Monad.ST
+import Data.STRef
+import Data.Array.ST
+import Data.Array.MArray
+import Control.Monad
 
 {-
 You talk to the Elves while you wait for your navigation system to initialize. To pass the time, they introduce you to
@@ -148,6 +156,93 @@ What would the new winning Elf's score be if the number of the last marble were 
 day9b :: [String] -> IO ()
 day9b ls = do
   let Just (np, lm) = parseLine $ ls !! 0
-      gamen = runGame np (lm * 100)
-      result = maxScore gamen
+      result = run2 np (lm * 100)
   putStrLn $ (show np) ++ " players; last marble is worth " ++ (show lm) ++ " points: high score = " ++ (show result)
+
+data Node s = Node { val :: Integer
+                   , p :: STRef s (Node s)
+                   , n :: STRef s (Node s)
+                   }
+
+
+ring0 :: ST s (STRef s (Node s))
+ring0 = do
+  rec nR <- newSTRef Node { val=0, p=prev, n=next }
+      node <- readSTRef nR
+      prev <- newSTRef node
+      next <- newSTRef node
+  return nR
+
+run2 np nm = runST $ do
+  ring <- ring0
+  sc <- newArray (0, np - 1) 0 :: ST s (STArray s Integer Integer)
+  forM_ [1 .. nm] $ \v -> do
+        if v `mod` 23 /= 0
+        then do
+          ring'n <- nextR ring
+          ring'n'n <- readSTRef (n ring'n)
+          ring' <- makeNode v ring'n ring'n'n
+          writeSTRef ring ring'
+        else do
+          ring'p <- prevR ring
+          ring'p'2 <- readSTRef (p ring'p)
+          ring'p'3 <- readSTRef (p ring'p'2)
+          ring'p'4 <- readSTRef (p ring'p'3)
+          ring'p'5 <- readSTRef (p ring'p'4)
+          ring'p'6 <- readSTRef (p ring'p'5)
+          ring'p'7 <- readSTRef (p ring'p'6)
+          writeSTRef ring ring'p'7
+          score <- readArray sc (v `mod` np)
+          v' <- valR ring
+          writeArray sc (v `mod` np) (score + v + v')
+          {- ring = ring.n -}
+          writeSTRef ring ring'p'6
+          {- ring.p = ring.p.p -}
+          ring'p'8 <- readSTRef (p ring'p'7)
+          writeSTRef (p ring'p'6) ring'p'8
+          {- ring.p.n = ring -}
+          writeSTRef (n ring'p'8) ring'p'6
+  e <- getElems sc
+  return $ maximum e
+
+makeNode :: Integer -> Node s -> Node s -> ST s (Node s)
+makeNode v prev next = do
+  prevR <- newSTRef prev
+  nextR <- newSTRef next
+  let node = Node { val=v, p=prevR, n=nextR }
+  writeSTRef (n prev) node
+  writeSTRef (p next) node
+  return node
+
+nextR :: STRef s (Node s) -> ST s (Node s)
+nextR nodeR = do
+  node <- readSTRef nodeR
+  node' <- readSTRef (n node)
+  return node'
+
+prevR :: STRef s (Node s) -> ST s (Node s)
+prevR nodeR = do
+  node <- readSTRef nodeR
+  node' <- readSTRef (p node)
+  return node'
+
+valR :: STRef s (Node s) -> ST s (Integer)
+valR nodeR = do
+  node <- readSTRef nodeR
+  return $ val node
+
+{-
+
+
+for m in range(1, top + 1):
+    if m % 23 != 0:
+        ring = Node(m, p=ring.n, n=ring.n.n)
+    else:
+        ring = ring.p.p.p.p.p.p.p
+        players[m % np] += m + ring.val
+        ring = ring.n
+        ring.p = ring.p.p
+        ring.p.n = ring
+
+print(max(players))
+-}

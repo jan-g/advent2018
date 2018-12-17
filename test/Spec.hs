@@ -102,6 +102,12 @@ main = hspec $ do
     it "evaluates a much longer game" $ do
       (Day9.maxScore $ Day9.runGame 13 7999) `shouldBe` 146373
 
+    it "uses the ST monad" $ do
+      (Day9.run2 9 25) `shouldBe` 32
+
+    it "evaluates a much longer game in the ST monad" $ do
+      (Day9.run2`` 13 7999) `shouldBe` 146373
+
   describe "Day11" $ do
     it "computes values correctly" $ do
       Day11.cellValue 57 122 79 `shouldBe` -5
