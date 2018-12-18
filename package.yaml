@@ -25,6 +25,7 @@ dependencies:
 - counter >= 0.1.0.2
 - heap >= 1.0.4
 - array >= 0.5.2.0
+- split >= 0.2.3.3
 
 library:
   source-dirs: src

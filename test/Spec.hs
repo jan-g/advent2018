@@ -6,7 +6,9 @@ import Day7
 import qualified Day8
 import qualified Day9
 import qualified Day11
+import qualified Day14
 import qualified Data.Set as Set
+import qualified Data.Sequence as Seq
 import Data.Array ((!))
 
 main :: IO ()
@@ -106,7 +108,7 @@ main = hspec $ do
       (Day9.run2 9 25) `shouldBe` 32
 
     it "evaluates a much longer game in the ST monad" $ do
-      (Day9.run2`` 13 7999) `shouldBe` 146373
+      (Day9.run2 13 7999) `shouldBe` 146373
 
   describe "Day11" $ do
     it "computes values correctly" $ do
@@ -131,3 +133,16 @@ main = hspec $ do
       let pls = Day11.makeArray 18
           (x, y, m) = Day11.calcMax pls 16
       (x, y, m) `shouldBe` (90, 269, 113)
+
+  describe "Day14" $ do
+    it "performs a short computation correctly" $ do
+      (Day14.runUntil [3, 7] 5 10) `shouldBe` Seq.fromList [0, 1, 2, 4, 5, 1, 5, 8, 9, 1]
+
+    it "does part b for a small sample" $ do
+      (Day14.runUntilMatched [3, 7] [5,1,5,8,9]) `shouldBe` 9
+
+    it "does part b for another small sample" $ do
+      (Day14.runUntilMatched [3, 7] [0,1,2,4,5]) `shouldBe` 5
+
+    it "does part b for a larger sample" $ do
+      (Day14.runUntilMatched [3, 7] [5,9,4,1,4]) `shouldBe` 2018

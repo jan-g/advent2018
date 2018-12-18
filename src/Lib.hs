@@ -4,6 +4,7 @@ module Lib
     , natParser
     , forAllIO
     , dropWhileR
+    , parseWith
     ) where
 
 import System.Environment
@@ -34,3 +35,9 @@ forAllIO (a:as) f = do
   forAllIO as f
 
 dropWhileR p as = reverse $ dropWhile p $ reverse as
+
+parseWith :: ReadP s -> String -> Maybe s
+parseWith p s =
+  case readP_to_S p s of
+    [] -> Nothing
+    [(e, "")] -> Just e
