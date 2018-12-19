@@ -18,6 +18,7 @@ import Day14
 import Day15
 import Day16
 import Day17
+import Day18
 
 
 import System.Environment
@@ -60,6 +61,8 @@ main = do
                  "day16b" -> day16b
                  "day17" -> day17
                  "day17b" -> day17b
+                 "day18" -> day18
+                 "day18b" -> day18b
       source = args !! 1
   ls <- loadLines source
   action ls
