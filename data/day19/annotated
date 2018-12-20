@@ -33,7 +33,7 @@ loop3:
             goto loop2
     else:
         goto loop3
-  ## Prime factors summed
+  ##  factors summed
 init:
     if r0 = 0:
         r3 = 920
