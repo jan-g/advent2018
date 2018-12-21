@@ -6,6 +6,7 @@ module Day9
     , Game, runGame, maxScore, marbles
     , rotate
     , run2
+    , run3
     ) where
 
 import Lib
@@ -20,6 +21,7 @@ import Data.STRef
 import Data.Array.ST
 import Data.Array.MArray
 import Control.Monad
+import qualified Data.Sequence as Q
 
 {-
 You talk to the Elves while you wait for your navigation system to initialize. To pass the time, they introduce you to
@@ -246,3 +248,50 @@ for m in range(1, top + 1):
 
 print(max(players))
 -}
+
+{- yet another version -}
+newtype DLL s = DLL (Q.Seq s)
+  deriving (Show)
+
+{- For this type, we are focussed at the left end. One step to the last focusses on the current last:
+   Focus : r1 : r2 : ... : l3 : l2 : l1
+ -}
+dllRing0 :: DLL Integer
+dllRing0 = DLL (Q.singleton 0)
+
+dllCurrent :: DLL s -> s
+dllCurrent (DLL (a Q.:<| _)) = a
+
+{- Drop and move one to the right -}
+dllDrop :: DLL s -> (s, DLL s)
+dllDrop (DLL (a Q.:<| rest)) = (a, DLL rest)
+
+{- Move right -}
+dllRight :: DLL s -> DLL s
+dllRight (DLL (a Q.:<| rest)) = DLL $ rest Q.|> a
+
+{- Move left -}
+dllLeft (DLL (rest Q.:|> a)) = DLL $ a Q.<| rest
+
+{- place one to the right of current, focussing on new -}
+dllPlace :: s -> DLL s -> DLL s
+dllPlace n (DLL (a Q.:<| rest)) = DLL $ (n Q.<| rest) Q.|> a
+
+infixl 2 ==>
+a ==> b = b a
+
+run3 np nm =
+  let (r, s) = foldl (\(r, s) m -> run3' r s m)
+                     (dllRing0, Array.array (1, np) [(i, 0) | i <- [1..np]])
+                     ([1 .. nm] `zip` (cycle [1 .. np]))
+
+  in  Array.elems s ==> maximum
+  where
+    run3' :: DLL Integer -> Array.Array Integer Integer -> (Integer, Integer) -> (DLL Integer, Array.Array Integer Integer)
+    run3' ring score (marb, pl)
+      | marb `mod` 23 /= 0 = (ring ==> dllRight ==> dllPlace marb, score)
+      | otherwise =
+        let (v, ring' ) = ring ==> dllLeft ==> dllLeft ==> dllLeft ==> dllLeft ==>
+                                   dllLeft ==> dllLeft ==> dllLeft ==> dllDrop
+            score' = score // [(pl, (score ! pl) + marb + v)]
+        in  (ring', score')

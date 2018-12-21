@@ -110,6 +110,22 @@ main = hspec $ do
     it "evaluates a much longer game in the ST monad" $ do
       (Day9.run2 13 7999) `shouldBe` 146373
 
+  describe "day9 attempt 3" $ do
+    it "evaluates some basic games" $ do
+      (Day9.run3 9 25) `shouldBe` 32
+
+    it "evaluates a much longer game" $ do
+      (Day9.run3 13 7999) `shouldBe` 146373
+
+    it "evaluates the part a input" $ do
+      (Day9.run3 418 71339) `shouldBe` 412127
+
+    {- Works, but takes about 10 seconds
+    it "evaluates the part b input" $ do
+      (Day9.run3 418 7133900) `shouldBe` 3482394794
+    -}
+
+
   describe "Day11" $ do
     it "computes values correctly" $ do
       Day11.cellValue 57 122 79 `shouldBe` -5
