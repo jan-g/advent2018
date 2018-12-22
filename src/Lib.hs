@@ -18,7 +18,7 @@ loadLines fn = do
 
 natParser :: ReadP Integer
 natParser = do
-  digits <- many1 $ satisfy (isDigit)
+  digits <- munch1 isDigit
   return $ read digits
 
 intParser :: ReadP Integer
