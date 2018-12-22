@@ -118,7 +118,8 @@ eMap depth (tx, ty) (xmax, ymax) =
                               let erosion = line y [(yMul * y + depth) `mod` eMod] [1..xmax] $ tail above
                               in (erosion:es)) ([erosion0]) [1..ymax]
       erosion = reverse e1
-  in Array.array ((0,0), (xmax, ymax)) [((x,y),e) | (y,l) <- zip [0..] erosion, (x,e) <- zip [0..] l]
+  in Array.listArray  ((0,0), (xmax, ymax)) $ concat $ List.transpose erosion
+  -- in Array.array ((0,0), (xmax, ymax)) [((x,y),e) | (y,l) <- zip [0..] erosion, (x,e) <- zip [0..] l]
   where
     line :: Integer -> [Integer] -> [Integer] -> [Integer] -> [Integer]
     line _ acc [] [] = reverse acc
