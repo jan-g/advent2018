@@ -1,6 +1,8 @@
 module Day22
     ( day22
     , day22b
+    , demo
+    , showTerrain2
     ) where
 
 import Lib
@@ -130,6 +132,25 @@ eMap depth (tx, ty) (xmax, ymax) =
           e = (g + depth) `mod` eMod
       in  line y (e:es) xs aboves
 
+
+{- Here's a sneaky doubly-infinite definition of the map -}
+eMap2 depth (tx, ty) =
+  map (\(y,row) -> map (\(x, cell) -> cell) row) lines
+  where
+    y0 = [(x, (x * xMul + depth) `mod` eMod) | x <- [0..]]
+    lines = ((0, y0):(map nextLine lines))
+    nextLine (yup, above) = (y, row)
+      where
+        y = yup + 1
+        x0 = (yMul * y + depth) `mod` eMod
+        row = (0, x0):(map nextCell ((tail above) `zip` row))
+        nextCell ((_, up), (xl, left)) = (x, cell)
+          where
+            x = xl + 1
+            cell = (g + depth) `mod` eMod
+              where
+                g | y == ty && x == tx = 0
+                  | otherwise = up * left
 
 
 {-
@@ -537,3 +558,19 @@ showTerrain t =
                   Wet -> '='
                   Narrow -> '|' | x <- [x1..x2]] | y <- [y1..y2]])
       ++ "x1,y1=" ++ (show (x1,y1)) ++ "; x2,y2=" ++ (show (x2,y2))
+
+
+showTerrain2 depth tx ty mx my =
+  unlines [[case toTerrain $ (eMap2 depth (tx, ty)) !! (fromIntegral y) !! (fromIntegral x) of
+                  Rocky -> '.'
+                  Wet -> '='
+                  Narrow -> '|' | x <- [0..mx]] | y <- [0..my]]
+  where
+    toTerrain e = case e `mod` 3 of
+      0 -> Rocky
+      1 -> Wet
+      2 -> Narrow
+
+demo = do
+  let (depth, (tx,ty)) = (510, (10, 10))
+  putStrLn $ showTerrain2 depth tx ty (tx + 5) (ty + 5)

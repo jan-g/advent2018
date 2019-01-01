@@ -42,6 +42,7 @@ extra-deps:
   - counter-0.1.0.2
   - split-0.2.3.3
   - maximal-cliques-0.1.1
+  - union-find-0.2
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

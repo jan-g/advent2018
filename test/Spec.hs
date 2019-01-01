@@ -7,6 +7,7 @@ import qualified Day8
 import qualified Day9
 import qualified Day11
 import qualified Day14
+import qualified Day22
 import qualified Data.Set as Set
 import qualified Data.Sequence as Seq
 import Data.Array ((!))
